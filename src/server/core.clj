@@ -1,11 +1,11 @@
 (ns server.core
-  (:require 
+  (:require
    [config.core :refer [load-env]]
    [hiccup.page :as hiccup]
    [mount.core :refer [defstate] :as mount]
    [org.httpkit.server :as http]
    [reitit.ring :as ring]
-   [ring.middleware.defaults
+   [server.middleware
     :refer [wrap-defaults api-defaults]]
    [ring.util.response :as response])
   (:gen-class))
@@ -48,4 +48,6 @@
   :stop (when server (server :timeout 100)))
 
 (defn -main [& args]
-  (mount/start))
+  (cond
+    (not (nil? args)) (mount/start)
+    :else (.println System/out "needs argument to start")))

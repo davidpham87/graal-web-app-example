@@ -1,0 +1,18 @@
+{:tasks
+ {jar (shell "clojure -X:depstar")
+  native
+  (let [tag (or (first *command-line-args*) "graalvm-http-kit-image")]
+    (shell (str "docker build -f devops/dockerfile -t " tag " .")))
+
+  native-wo-jar
+  (let [tag (or (first *command-line-args*) "graalvm-http-kit-image")]
+    (shell (str "docker build -f devops/dockerfile_wo_jar -t " tag " .")))
+  run
+  (let [image-tag (or (first *command-line-args*) "graalvm-http-kit-image")]
+    (shell (str "docker run --name http-kit -it -p 8080:8080/tcp --rm " image-tag)))
+
+  cp (shell "docker cp http-kit:/app ./target/")
+
+  clean
+  (do (shell "rm target/*")
+      (shell "docker stop http-kit"))}}
