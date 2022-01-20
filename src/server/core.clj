@@ -1,5 +1,6 @@
 (ns server.core
   (:require
+   [clojure.pprint :refer (pprint)]
    [integrant.core :as ig]
    [hiccup.page :as hiccup]
    [org.httpkit.server :as http]
@@ -12,25 +13,46 @@
 ;; Graal does not support reflection calls
 (set! *warn-on-reflection* true)
 
+(defn routes []
+  [["/"
+    {:get (fn [request]
+            (-> (hiccup/html5
+                 [:head (hiccup/include-css "screen.css")]
+                 [:div.content
+                  [:h2 (str "Hello " (:remote-addr request) " 🔥🔥🔥")]])
+                (response/response)
+                (response/header "content-type" "text/html")))}]
+   ["/hello/:id"
+    {:get (fn [{{id :id} :path-params :as request}]
+            (-> (hiccup/html5
+                 [:head (hiccup/include-css "/screen.css")]
+                 [:div.content
+                  [:h2 (str "Hello " (:remote-addr request) " " id)]])
+                (response/response)
+                (response/header "content-type" "text/html")))}]
+   ["/path/*path"
+    {:name ::forward
+     :get
+     (fn [{{path :path} :path-params :as request}]
+       (-> (hiccup/html5
+            [:head (hiccup/include-css "/screen.css")]
+            [:div.content
+             [:h2 (str "Hello " (:remote-addr request) " " path)]])
+           (response/response)
+           (response/header "content-type" "text/html")))
+     :post
+     (fn [{{path :path} :path-params :as request}]
+       (-> (hiccup/html5
+            [:head (hiccup/include-css "/screen.css")]
+            [:div.content
+             [:h2 (str "Hello " (:remote-addr request) " " path)]])
+           (response/response)
+           (response/header "content-type" "text/html")))}]])
+
 (def handler
   (ring/ring-handler
-   (ring/router
-    [["/"
-      {:get (fn [request]
-              (-> (hiccup/html5
-                   [:head (hiccup/include-css "screen.css")]
-                   [:div.content
-                    [:h2 (str "Hello " (:remote-addr request) " 🔥🔥🔥")]])
-                  (response/response)
-                  (response/header "content-type" "text/html")))}]
-     ["/hello/:id"
-      {:get (fn [{{id :id} :path-params :as request}]
-              (-> (hiccup/html5
-                   [:head (hiccup/include-css "/screen.css")]
-                   [:div.content
-                    [:h2 (str "Hello " (:remote-addr request) " " id)]])
-                  (response/response)
-                  (response/header "content-type" "text/html")))}]])))
+   (ring/router (routes))
+   (constantly {:status 404, :body ""})))
 
 (defmethod response/resource-data :resource
   [^java.net.URL url]

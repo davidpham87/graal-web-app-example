@@ -16,7 +16,6 @@ native-image -cp app.jar -jar app.jar \
              -J-Dclojure.spec.skip.macros=true \
              -J-Dclojure.compiler.direct-linking=true \
              -J-Xmx3G \
-             --initialize-at-run-time=org.httpkit.client.ClientSslEngineFactory$SSLHolder \
              --enable-http \
              --enable-https \
              --verbose \
@@ -27,7 +26,9 @@ native-image -cp app.jar -jar app.jar \
              -H:CCompilerOption=-pipe \
              --allow-incomplete-classpath \
              --enable-url-protocols=http,https \
-             -H:ResourceConfigurationFiles=resource-config.json
+             -H:ResourceConfigurationFiles=resource-config.json \
+             -H:ReflectionConfigurationFiles=reflection-config.json \
+             --initialize-at-run-time=org.httpkit.client.ClientSslEngineFactory$SSLHolder
 
 chmod +x app
 

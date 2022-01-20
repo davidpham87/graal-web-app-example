@@ -14,9 +14,8 @@ FROM ghcr.io/graalvm/native-image AS native
 WORKDIR /usr/src/app
 
 COPY --from=builder /home/circleci/project/target/app.jar /usr/src/app/app.jar
-
 COPY resource-config.json .
-
+COPY reflectconfig.json .
 COPY config.edn .
 
 # Compile into a native binary
