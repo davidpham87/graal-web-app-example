@@ -2,4 +2,5 @@
 **/.clj-kondo
 **/.lsp
 **/.git
-app
+target/app
+  

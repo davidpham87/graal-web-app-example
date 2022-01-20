@@ -9,7 +9,7 @@
     (shell (str "docker build -f devops/dockerfile_wo_jar -t " tag " .")))
   run
   (let [image-tag (or (first *command-line-args*) "graalvm-http-kit-image")]
-    (shell (str "docker run --name http-kit -it -p 8080:8080/tcp --rm " image-tag)))
+    (shell (str "docker run --name http-kit -dt -p 8080:8080/tcp --rm " image-tag)))
 
   cp (shell "docker cp http-kit:/app ./target/")
 
