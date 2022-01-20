@@ -1,0 +1,26 @@
+FROM docker.io/cimg/clojure:1.10.3 AS builder
+
+USER circleci
+
+WORKDIR /home/circleci/project
+
+COPY . .
+RUN mkdir -p target
+
+# Compile into a uberjar
+RUN clojure -X:depstar
+
+FROM gcr.io/distroless/java17-debian11:latest
+
+ENV PORT="8080"
+
+ENV HOST="0.0.0.0"
+
+EXPOSE 8080
+
+COPY --from=builder /home/circleci/project/app.jar .
+
+COPY config.edn .
+
+# Run the app
+CMD ["app.jar", "init"]

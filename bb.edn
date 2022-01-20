@@ -1,5 +1,14 @@
 {:tasks
  {jar (shell "clojure -X:depstar")
+
+  docker-java
+  (let [tag (or (first *command-line-args*) "java-http-kit-image")]
+    (shell (str "docker build -f devops/dockerfile_java -t " tag " .")))
+
+  docker-run-java
+  (let [tag (or (first *command-line-args*) "java-http-kit-image")]
+    (shell (str "docker run --name http-kit-java -it -p 8080:8080/tcp --rm " tag)))
+
   native
   (let [tag (or (first *command-line-args*) "graalvm-http-kit-image")]
     (shell (str "docker build -f devops/dockerfile -t " tag " .")))
@@ -14,5 +23,5 @@
   cp (shell "docker cp http-kit:/app ./target/")
 
   clean
-  (do (shell "rm target/*")
+  (do (shell "rm target/app")
       (shell "docker stop http-kit"))}}

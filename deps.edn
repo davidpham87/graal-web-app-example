@@ -7,11 +7,11 @@
   javax.servlet/javax.servlet-api      {:mvn/version "4.0.1"}
   metosin/reitit                       {:mvn/version "0.5.15"}
   metosin/jsonista                     {:mvn/version "0.3.5"}
-  org.clojure/clojure    {:mvn/version "1.10.3"}
-  ring/ring-anti-forgery {:mvn/version "1.3.0"}
-  ring/ring-core         {:mvn/version "1.9.5"}
-  ring/ring-headers      {:mvn/version "0.3.0"}
-  ring/ring-ssl          {:mvn/version "0.3.0"}}
+  org.clojure/clojure                  {:mvn/version "1.10.3"}
+  ring/ring-anti-forgery               {:mvn/version "1.3.0"}
+  ring/ring-core                       {:mvn/version "1.9.5"}
+  ring/ring-headers                    {:mvn/version "0.3.0"}
+  ring/ring-ssl                        {:mvn/version "0.3.0"}}
 
  :aliases
  {:cider-repl
@@ -27,7 +27,7 @@
    {com.github.seancorfield/depstar {:mvn/version "2.1.303"}}
    :ns-default hf.depstar
    :exec-fn    hf.depstar/uberjar
-   :exec-args  {:jar        target/app.jar
+   :exec-args  {:jar        app.jar
                 :aot        true
                 :compile-ns [server.core]
                 :main-class "server.core"}}}}

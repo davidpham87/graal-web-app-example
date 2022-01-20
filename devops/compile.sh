@@ -27,7 +27,7 @@ native-image -cp app.jar -jar app.jar \
              --allow-incomplete-classpath \
              --enable-url-protocols=http,https \
              -H:ResourceConfigurationFiles=resource-config.json \
-             -H:ReflectionConfigurationFiles=reflection-config.json \
+             -H:ReflectionConfigurationFiles=reflectconfig.json \
              --initialize-at-run-time=org.httpkit.client.ClientSslEngineFactory$SSLHolder
 
 chmod +x app
