@@ -5,7 +5,6 @@ USER circleci
 WORKDIR /home/circleci/project
 
 COPY . .
-RUN mkdir -p target
 
 # Compile into a uberjar
 RUN clojure -X:depstar
@@ -27,7 +26,7 @@ RUN chmod +x compile.sh
 
 RUN ./compile.sh
 COPY --from=upx /usr/local/bin/upx /usr/local/bin/upx
-RUN upx -6 /usr/src/app/app && ls -ah app
+# RUN upx -6 /usr/src/app/app && ls -ah app
 
 FROM gcr.io/distroless/base:latest
 

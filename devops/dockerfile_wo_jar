@@ -5,7 +5,7 @@ WORKDIR /usr/src/app
 
 COPY app.jar .
 COPY resource-config.json .
-COPY reflectconfig.json .  
+COPY reflectconfig.json .
 COPY config.edn .
 
 # Compile into a native binary
@@ -15,8 +15,8 @@ RUN chmod +x compile.sh
 
 COPY --from=upx /usr/local/bin/upx /usr/local/bin/upx
 RUN ./compile.sh
-RUN upx -6 /usr/src/app/app && ls -ah app
-  
+# RUN upx -6 /usr/src/app/app && ls -ah app
+
 FROM gcr.io/distroless/base:latest
 
 ENV PORT="8080"

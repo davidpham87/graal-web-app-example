@@ -5,7 +5,6 @@ USER circleci
 WORKDIR /home/circleci/project
 
 COPY . .
-RUN mkdir -p target
 
 # Compile into a uberjar
 RUN clojure -X:depstar
