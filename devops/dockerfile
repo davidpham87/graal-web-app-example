@@ -10,6 +10,7 @@ COPY . .
 RUN clojure -X:depstar
 
 FROM kolaente/upx AS upx
+# FROM findepi/graalvm:java17-native AS native # Alternative
 FROM ghcr.io/graalvm/native-image AS native
 
 WORKDIR /usr/src/app
@@ -26,8 +27,9 @@ RUN chmod +x compile.sh
 
 RUN ./compile.sh
 COPY --from=upx /usr/local/bin/upx /usr/local/bin/upx
-# RUN upx -6 /usr/src/app/app && ls -ah app
+# RUN upx -3 /usr/src/app/app && ls -ah app
 
+# FROM docker.io/debian:buster-slim AS native # Alternative
 FROM gcr.io/distroless/base:latest
 
 ENV PORT="8080"

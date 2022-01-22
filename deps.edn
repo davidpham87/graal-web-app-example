@@ -1,6 +1,7 @@
 {:paths ["resources" "src"]
  :deps
  {com.github.clj-easy/graal-build-time {:mvn/version "0.1.4"}
+  org.clj-commons/clj-http-lite        {:mvn/version "0.4.392"}
   hiccup/hiccup                        {:mvn/version "1.0.5"}
   http-kit/http-kit                    {:mvn/version "2.5.3"}
   integrant/integrant                  {:mvn/version "0.8.0"}
@@ -29,5 +30,6 @@
    :exec-fn    hf.depstar/uberjar
    :exec-args  {:jar        app.jar
                 :aot        true
+                :jvm-opts ["-Dclojure.compiler.direct-linking=true"]
                 :compile-ns [server.core]
                 :main-class "server.core"}}}}

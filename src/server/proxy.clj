@@ -1,8 +1,7 @@
 (ns server.proxy
   (:require
    [clojure.string :as str]
-   [jsonista.core :as json]
-   [org.httpkit.client :as client]))
+   [clj-http.lite.client :as client]))
 
 (defn build-url [host path query-string]
   (let [url (.toString (java.net.URL. (java.net.URL. host) path))]
@@ -11,7 +10,7 @@
       url)))
 
 (defn handle-not-found [_]
-  {:status 404 :body (json/write-value-as-string {:message "Not found"})})
+  {:status 404 :body "Not found"})
 
 (defn host-from-url [url]
   (when url (str/replace url #"http://" "")))
@@ -25,11 +24,13 @@
             stripped-headers      (dissoc (:headers request) "content-length")
             replaced-host-headers (assoc stripped-headers "host" (host-from-url host))]
         (if host
-          (select-keys (client/request {:url     (build-url host (:uri request) (:query-string request))
-                                        :method  (:request-method request)
-                                        :body    (:body request)
-                                        :headers replaced-host-headers
-                                        :as      :stream})
+          (select-keys (client/request {:url              (build-url host (:uri request) (:query-string request))
+                                         :method           (:request-method request)
+                                         :body             (:body request)
+                                         :headers          replaced-host-headers
+                                         :throw-exceptions false
+                                         :decompress-body  false
+                                         :as               :stream})
                        [:status :headers :body])
           (handler request))))))
 
