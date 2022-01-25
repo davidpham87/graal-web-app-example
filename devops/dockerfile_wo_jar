@@ -1,5 +1,8 @@
 FROM kolaente/upx AS upx
-FROM ghcr.io/graalvm/native-image AS native
+# FROM ghcr.io/graalvm/native-image:22.0.0 AS native
+FROM supaponey/graalvm22000java17 AS native  
+
+USER root
 
 WORKDIR /usr/src/app
 

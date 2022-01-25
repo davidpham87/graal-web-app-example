@@ -24,12 +24,12 @@
                 "--middleware" "[refactor-nrepl.middleware/wrap-refactor,cider.nrepl/cider-middleware]"]}
 
   :depstar
-  {:replace-deps
+  {:jvm-opts ["-Dclojure.compiler.direct-linking=true"]
+   :replace-deps
    {com.github.seancorfield/depstar {:mvn/version "2.1.303"}}
    :ns-default hf.depstar
    :exec-fn    hf.depstar/uberjar
    :exec-args  {:jar        app.jar
                 :aot        true
-                :jvm-opts ["-Dclojure.compiler.direct-linking=true"]
                 :compile-ns [server.core]
                 :main-class "server.core"}}}}

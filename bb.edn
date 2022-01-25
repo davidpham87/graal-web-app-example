@@ -1,5 +1,16 @@
 {:tasks
- {jar (shell "clojure -X:depstar")
+ {:requires ([babashka.fs :as fs]
+             [clojure.tools.cli :refer [parse-opts]])
+  :init (do (defn env [s] (System/getenv s))
+            (def cli-opts
+              [["-p" "--port PORT" "Port number" :default 8080 :parse-fn (fn [x] (Integer/parseInt x))]
+               ["-t" "--tag TAG" "Tag" :default "graalvm-http-kit-image"]
+               ["-n" "--name name" "Tag" :default "http-kit"]
+               ["-h" "--help"]])
+            (def args (:options (parse-opts *command-line-args* cli-opts)))
+            (println args))
+
+  jar (shell "clojure -X:depstar")
 
   docker-java
   (let [tag (or (first *command-line-args*) "java-http-kit-image")]
@@ -10,18 +21,19 @@
     (shell (str "docker run --name http-kit-java -it -p 8080:8080/tcp --rm " tag)))
 
   native
-  (let [tag (or (first *command-line-args*) "graalvm-http-kit-image")]
-    (shell (str "docker build -f devops/dockerfile -t " tag " .")))
+  (shell (str "docker build -f devops/dockerfile -t " (:tag args) " ."))
 
   native-wo-jar
   (let [tag (or (first *command-line-args*) "graalvm-http-kit-image")]
     (shell (str "docker build -f devops/dockerfile_wo_jar -t " tag " .")))
+
   run
   (let [image-tag (or (first *command-line-args*) "graalvm-http-kit-image")]
     (shell (str "docker run --name http-kit -dt -p 8080:8080/tcp --rm " image-tag)))
 
-  cp (shell "docker cp http-kit:/app ./target/")
+  cp (shell "docker cp http-kit:/app .")
 
   clean
-  (do (shell "rm target/app")
-      (shell "docker stop http-kit"))}}
+  (do (fs/delete-if-exists "app")
+      (fs/delete-if-exists "app.jar")
+      (shell {:continue true} "docker stop http-kit"))}}
