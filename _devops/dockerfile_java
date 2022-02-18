@@ -4,12 +4,18 @@ USER circleci
 
 WORKDIR /home/circleci/project
 
-COPY . .
+COPY deps.edn .
+RUN clojure -Spath
+
+COPY src src
+COPY resources resources
+COPY config.edn config.edn
 
 # Compile into a uberjar
 RUN clojure -X:depstar
 
-FROM gcr.io/distroless/java17-debian11:latest
+# FROM amazoncorretto:17
+FROM gcr.io/distroless/java17-debian11
 
 ENV PORT="8080"
 
@@ -22,4 +28,4 @@ COPY --from=builder /home/circleci/project/app.jar .
 COPY config.edn .
 
 # Run the app
-CMD ["app.jar", "init"]
+CMD ["java", "app.jar", "init"]

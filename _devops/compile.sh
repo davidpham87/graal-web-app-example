@@ -28,7 +28,9 @@ native-image -cp app.jar -jar app.jar \
              --enable-url-protocols=http,https \
              -H:ResourceConfigurationFiles=resource-config.json \
              -H:ReflectionConfigurationFiles=reflectconfig.json \
-             --initialize-at-run-time=org.httpkit.client.ClientSslEngineFactory$SSLHolder
+             --initialize-at-run-time=org.httpkit.client.ClientSslEngineFactory$SSLHolder \
+             --initialize-at-build-time=com.fasterxml.jackson,javax.xml.datatype,jdk.xml.internal.SecuritySupport
+
 
 chmod +x app
 

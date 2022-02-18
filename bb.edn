@@ -14,18 +14,18 @@
 
   docker-java
   (let [tag (or (first *command-line-args*) "java-http-kit-image")]
-    (shell (str "docker build -f devops/dockerfile_java -t " tag " .")))
+    (shell (str "docker build -f _devops/dockerfile_java -t " tag " .")))
 
   docker-run-java
   (let [tag (or (first *command-line-args*) "java-http-kit-image")]
     (shell (str "docker run --name http-kit-java -it -p 8080:8080/tcp --rm " tag)))
 
   native
-  (shell (str "docker build -f devops/dockerfile -t " (:tag args) " ."))
+  (shell (str "docker build -f _devops/dockerfile -t " (:tag args) " ."))
 
   native-wo-jar
   (let [tag (or (first *command-line-args*) "graalvm-http-kit-image")]
-    (shell (str "docker build -f devops/dockerfile_wo_jar -t " tag " .")))
+    (shell (str "docker build -f _devops/dockerfile_wo_jar -t " tag " .")))
 
   run
   (let [image-tag (or (first *command-line-args*) "graalvm-http-kit-image")]

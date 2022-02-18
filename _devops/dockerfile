@@ -4,13 +4,16 @@ USER circleci
 
 WORKDIR /home/circleci/project
 
-COPY . .
+COPY deps.edn .
+RUN clojure -Spath
+
+COPY src src
+COPY resources resources
+COPY config.edn .
 
 # Compile into a uberjar
 RUN clojure -X:depstar
 
-FROM kolaente/upx AS upx
-# FROM findepi/graalvm:java17-native AS native # Alternative
 FROM ghcr.io/graalvm/native-image AS native
 
 WORKDIR /usr/src/app
@@ -21,16 +24,20 @@ COPY reflectconfig.json .
 COPY config.edn .
 
 # Compile into a native binary
-COPY devops/compile.sh .
+COPY _devops/compile.sh .
 
 RUN chmod +x compile.sh
 
 RUN ./compile.sh
-COPY --from=upx /usr/local/bin/upx /usr/local/bin/upx
-# RUN upx -3 /usr/src/app/app && ls -ah app
 
-# FROM docker.io/debian:buster-slim AS native # Alternative
-FROM gcr.io/distroless/base:latest
+FROM ubuntu AS native-tar
+
+COPY --from=native /usr/src/app/app /
+RUN tar -cjvf app.tar.bz2 app
+
+FROM gcr.io/distroless/base
+
+COPY --from=native-tar /app.tar.bz2 /
 
 ENV PORT="8080"
 
@@ -38,9 +45,8 @@ ENV HOST="0.0.0.0"
 
 EXPOSE 8080
 
-COPY --from=native /usr/src/app/app /
-
 COPY config.edn .
 
 # Run the app
-CMD ["/app", "init"]
+COPY _devops/start.sh .
+CMD ["sh", "start.sh"]

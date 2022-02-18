@@ -1,13 +1,14 @@
 (ns server.core
   (:require
    [clojure.pprint :refer (pprint)]
-   [integrant.core :as ig]
    [hiccup.page :as hiccup]
+   [integrant.core :as ig]
+   [jsonista.core :as j]
    [org.httpkit.server :as http]
    [reitit.ring :as ring]
+   [ring.util.response :as response]
    [server.middleware
-    :refer [wrap-defaults api-defaults]]
-   [ring.util.response :as response])
+    :refer [wrap-defaults api-defaults]])
   (:gen-class))
 
 ;; Graal does not support reflection calls
@@ -30,6 +31,12 @@
                   [:h2 (str "Hello " (:remote-addr request) " " id)]])
                 (response/response)
                 (response/header "content-type" "text/html")))}]
+   ["/api/:id"
+    {:get (fn [{{id :id} :path-params :as request}]
+            (-> {:id id :data [{:a 2 :b 3}]}
+                j/write-value-as-string
+                (response/response)
+                (response/header "content-type" "application/json")))}]
    ["/path/*path"
     {:name ::forward
      :get
